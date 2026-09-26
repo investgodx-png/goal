@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0e1a" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>Lakshya — Money Goal Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+</head>
+<body>
+<div id="appFrame">
+
+  <!-- ══════════ FIRST-RUN / SETUP ══════════ -->
+  <div id="setupOverlay" class="hidden">
+    <div class="setup-card">
+      <div class="setup-logo">🎯</div>
+      <h1 class="setup-title">Lakshya</h1>
+      <p class="setup-sub">Set your money goal. Track every rupee.<br>Reach your <em>lakshya</em>.</p>
+      <form id="setupForm" autocomplete="off">
+        <label class="fld"><span>Goal name</span>
+          <input id="setupName" type="text" placeholder="e.g. New Bike, Trip to Goa" maxlength="40" required>
+        </label>
+        <label class="fld"><span>Goal amount (₹)</span>
+          <input id="setupAmount" type="number" inputmode="decimal" min="1" step="any" placeholder="50000" required>
+        </label>
+        <label class="fld"><span>Already saved (₹) <i class="opt">optional</i></span>
+          <input id="setupSaved" type="number" inputmode="decimal" min="0" step="any" placeholder="0">
+        </label>
+        <label class="fld"><span>Target date</span>
+          <input id="setupDeadline" type="date" required>
+        </label>
+        <button class="btn btn-gold btn-block" type="submit">Start My Journey →</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════ HEADER ══════════ -->
+  <header id="appHeader">
+    <div>
+      <p id="hdrGreet" class="hdr-greet">Good morning</p>
+      <h1 id="hdrDate" class="hdr-date">—</h1>
+    </div>
+    <div class="hdr-right">
+      <button id="bellBtn" class="icon-btn" aria-label="Reminders">🔔<span id="bellDot" class="bell-dot hidden"></span></button>
+      <div class="avatar">🎯</div>
+    </div>
+  </header>
+
+  <!-- ══════════ MAIN ══════════ -->
+  <main id="mainScroll">
+
+    <!-- ─────── HOME / DASHBOARD ─────── -->
+    <section id="tab-home" class="tab active">
+      <div class="hero-card">
+        <div class="hero-bg"></div>
+        <div class="hero-top">
+          <div>
+            <p class="hero-label">MY GOAL</p>
+            <h2 id="goalName" class="hero-goal">—</h2>
+          </div>
+          <button id="editGoalBtn" class="chip-btn">✏️ Edit</button>
+        </div>
+        <div class="hero-mid">
+          <div class="ring-wrap">
+            <svg viewBox="0 0 160 160" class="ring">
+              <defs>
+                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffd76a"/><stop offset="55%" stop-color="#f5a623"/><stop offset="100%" stop-color="#e2647f"/>
+                </linearGradient>
+              </defs>
+              <circle class="ring-bg" cx="80" cy="80" r="64"/>
+              <circle id="ringFg" class="ring-fg" cx="80" cy="80" r="64"/>
+            </svg>
+            <div class="ring-center">
+              <span id="progressPct" class="ring-pct">0%</span>
+              <span class="ring-cap">complete</span>
+            </div>
+          </div>
+          <div class="hero-amounts">
+            <p class="amt-label">Saved so far</p>
+            <p id="earnedBig" class="amt-big">₹0</p>
+            <p class="amt-of">of <b id="goalAmtInline">₹0</b></p>
+            <div class="hero-pill" id="pacePill">🚀 On track</div>
+          </div>
+        </div>
+        <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><span class="stat-ico">🎯</span><p class="stat-val" id="stGoal">₹0</p><p class="stat-lbl">Goal</p></div>
+        <div class="stat-card"><span class="stat-ico">💰</span><p class="stat-val" id="stEarned">₹0</p><p class="stat-lbl">Earned</p></div>
+        <div class="stat-card"><span class="stat-ico">🧗</span><p class="stat-val" id="stRemaining">₹0</p><p class="stat-lbl">Remaining</p></div>
+        <div class="stat-card"><span class="stat-ico">📅</span><p class="stat-val" id="stDaysLeft">0</p><p class="stat-lbl">Days left</p></div>
+      </div>
+
+      <div class="duo-row">
+        <div class="target-card today">
+          <p class="t-lbl">☀️ Today's target</p>
+          <p class="t-val" id="todayTarget">₹0</p>
+          <p class="t-sub" id="todayEarnedSub">Earned today: ₹0</p>
+        </div>
+        <div class="target-card tomorrow">
+          <p class="t-lbl">🌙 Tomorrow's target</p>
+          <p class="t-val" id="tomorrowTarget">₹0</p>
+          <p class="t-sub" id="tomoSub">if you hit today</p>
+        </div>
+      </div>
+
+      <div class="milestones card">
+        <div class="card-head"><h3>🏁 Milestones</h3></div>
+        <div id="milestoneRow" class="milestone-row"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>🕘 Recent days</h3><span class="card-link" id="seeAllEntries"> </span></div>
+        <div id="recentEntries" class="entry-list"></div>
+      </div>
+      <div class="bottom-pad"></div>
+    </section>
+
+    <!-- ─────── LOANS ─────── -->
+    <section id="tab-loans" class="tab">
+      <div class="loan-summary">
+        <div class="ls-card owe"><p class="ls-lbl">You owe</p><p class="ls-val" id="sumBorrowed">₹0</p></div>
+        <div class="ls-card owed"><p class="ls-lbl">Owed to you</p><p class="ls-val" id="sumLent">₹0</p></div>
+      </div>
+      <div class="seg" id="loanSeg">
+        <button data-f="all" class="seg-btn active">All</button>
+        <button data-f="borrowed" class="seg-btn">Borrowed</button>
+        <button data-f="lent" class="seg-btn">Lent</button>
+      </div>
+      <div id="loanList" class="loan-list"></div>
+      <button id="addLoanBtn" class="btn btn-violet btn-block">＋ Add borrowed / lent</button>
+      <div class="bottom-pad"></div>
+    </section>
+
+    <!-- ─────── ANALYTICS ─────── -->
+    <section id="tab-stats" class="tab">
+      <div class="card">
+        <div class="card-head"><h3>📊 Last 7 days</h3></div>
+        <div id="weekChart" class="week-chart"></div>
+        <div class="chart-legend"><span id="weekTotal">Total: ₹0</span><span id="weekAvg">Avg/day: ₹0</span></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card"><span class="stat-ico">🏆</span><p class="stat-val" id="bestDay">₹0</p><p class="stat-lbl">Best day</p></div>
+        <div class="stat-card"><span class="stat-ico">🔥</span><p class="stat-val" id="streak">0</p><p class="stat-lbl">Day streak</p></div>
+        <div class="stat-card"><span class="stat-ico">📈</span><p class="stat-val" id="avgDaily">₹0</p><p class="stat-lbl">Avg / day</p></div>
+        <div class="stat-card"><span class="stat-ico">🤝</span><p class="stat-val" id="loanNet">₹0</p><p class="stat-lbl">Loans net</p></div>
+      </div>
+      <div class="card projection" id="projectionCard">
+        <div class="card-head"><h3>🔮 Projection</h3></div>
+        <p id="projectionText" class="proj-text">Add a few daily updates to unlock projections.</p>
+      </div>
+      <div class="bottom-pad"></div>
+    </section>
+
+    <!-- ─────── MORE / REMINDERS ─────── -->
+    <section id="tab-more" class="tab">
+      <div class="card">
+        <div class="card-head"><h3>⏰ Reminders</h3></div>
+        <div id="reminderList" class="entry-list"></div>
+        <button id="addReminderBtn" class="btn btn-ghost btn-block">＋ New reminder</button>
+      </div>
+      <div class="card menu-card">
+        <button class="menu-row" id="menuEditGoal"><span>🎯 Edit goal</span><span>›</span></button>
+        <button class="menu-row" id="menuExport"><span>📤 Backup data (JSON)</span><span>›</span></button>
+        <button class="menu-row danger" id="menuReset"><span>🗑 Reset everything</span><span>›</span></button>
+      </div>
+      <p class="about">Lakshya v1.0 · your data never leaves this device 💾</p>
+      <div class="bottom-pad"></div>
+    </section>
+  </main>
+
+  <!-- ══════════ BOTTOM NAV ══════════ -->
+  <nav id="bottomNav">
+    <button class="nav-btn active" data-tab="home"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></button>
+    <button class="nav-btn" data-tab="loans"><svg viewBox="0 0 24 24"><path d="M7 8a4 4 0 1 1 0 .01zM3 20c0-3.3 2.7-6 6-6h1M17 4a4 4 0 0 1 0 8m4 8c0-2.2-1.2-4.1-3-5.1" fill="none" stroke-width="2" stroke-linecap="round"/></svg><span>Loans</span></button>
+    <button class="nav-fab" id="fabUpdate" aria-label="Daily update"><span>＋</span></button>
+    <button class="nav-btn" data-tab="stats"><svg viewBox="0 0 24 24"><path d="M4 20V10m6 10V4m6 16v-7" fill="none" stroke-width="2.4" stroke-linecap="round"/></svg><span>Stats</span></button>
+    <button class="nav-btn" data-tab="more"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg><span>More</span></button>
+  </nav>
+
+  <!-- ══════════ SHEET + TOAST ══════════ -->
+  <div id="sheetBackdrop" class="hidden"></div>
+  <div id="sheet" class="hidden"><div class="sheet-grab"></div><div id="sheetBody"></div></div>
+  <div id="toast" class="hidden"></div>
+  <canvas id="confettiCanvas"></canvas>
+</div>
+
+<script src="js/calc.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
